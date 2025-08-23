@@ -1,0 +1,109 @@
+cabal-version:      3.0
+name:               miso-maze
+version:            0.1.0.0
+build-type:         Simple
+
+executable app
+  hs-source-dirs:
+    src
+  main-is:
+    client.hs
+  other-modules:
+    App.Component
+    App.Model
+    Game.Common
+    Network.Protocol
+    Network.Api
+  build-depends: 
+    aeson,
+    base,
+    bytestring,
+    containers,
+    jsaddle,
+    miso,
+    network-uri,
+    random,
+    servant,
+    text,
+    vector
+  ghc-options:
+    -Wall -O2 -no-hs-main -optl-mexec-model=reactor "-optl-Wl,--export=hs_start" -ddump-splices
+  cpp-options:
+    -DWASM
+  default-language:
+    GHC2021
+  default-extensions:
+    CPP TemplateHaskell
+
+executable miso-maze-ws
+  hs-source-dirs:
+    src
+  main-is:
+    server.hs
+  other-modules:
+    App.Component
+    App.Model
+    Game.Common
+    Game.Game
+    Network.Api
+    Network.Protocol
+    Server.ServerApp
+    Server.WsApp
+    Server.WsModel
+  build-depends: 
+    aeson,
+    base,
+    bytestring,
+    containers,
+    directory,
+    http-types,
+    jsaddle,
+    miso,
+    network-uri,
+    random,
+    servant,
+    servant-server,
+    stm,
+    text,
+    vector,
+    wai,
+    wai-app-static,
+    wai-extra,
+    wai-websockets,
+    warp,
+    websockets
+  ghc-options:
+    -Wall -O2 -ddump-splices
+  default-language:
+    GHC2021
+  default-extensions:
+    CPP TemplateHaskell
+
+test-suite test
+  main-is:
+    spec.hs
+  hs-source-dirs:
+    src
+  type:
+    exitcode-stdio-1.0
+  build-depends:
+    aeson,
+    base,
+    containers,
+    hspec,
+    miso,
+    random,
+    text,
+    vector
+  other-modules:
+    Game.Common
+    Game.CommonSpec
+    Game.Game
+    Game.GameSpec
+  default-language:
+    GHC2021
+  default-extensions:
+    CPP TemplateHaskell
+  ghc-options:
+    -Wall -O2
+

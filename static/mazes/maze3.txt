@@ -1,0 +1,12 @@
+11 31
+..xxxxxxxxxxxxxxxxxxxxxxxxxxx..
+...............................
+x..xx...xx..x...xxxx...xxxx...x
+x..x.x.x.x.....x......xx..xx..x
+x..x..x..x..x..x......x....x..x
+x..x.....x..x...xxx........x..x
+x..x.....x..x......x..x....x..x
+x..x.....x..x......x..xx..xx..x
+x..x.....x..x..xxxx....xxxx...x
+...............................
+..xxxxxxxxxxxxxxxxxxxxxxxxxxx..
