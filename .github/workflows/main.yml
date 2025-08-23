@@ -22,13 +22,10 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Update nixpkgs
-        run: |
-          nix-channel --add https://nixos.org/channels/nixos-25.05
-          nix-channel --update
-
       - name: Build using Nix
-        run: nix-build
+        run: |
+          export NIX_PATH=nixpkgs=https://github.com/NixOS/nixpkgs/archive/refs/tags/25.05.tar.gz
+          nix-build 
 
   build-app:
     runs-on: ubuntu-latest
