@@ -22,6 +22,11 @@ jobs:
         with:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Update nixpkgs
+        run: |
+          nix-channel --add https://nixos.org/channels/nixos-25.05
+          nix-channel --update
+
       - name: Build using Nix
         run: nix-build
 
