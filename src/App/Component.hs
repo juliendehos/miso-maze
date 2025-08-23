@@ -150,6 +150,20 @@ viewModel m@Model{..} =
             , input_ [ type_ "text", onChange ActionName ]
             ]
         , button_ [ onClick ActionConnect ] [ "connect" ]
+        , div_ [] 
+            [ p_ [] ["To run the server locally:"]
+            , p_ [] 
+                [ span_ 
+                  [ CSS.style_  
+                      [ CSS.backgroundColor (CSS.hex 0xFFDDDD)
+                      , CSS.padding "5px"
+                      , CSS.margin "5px"
+                      , CSS.border "1px solid black"
+                      ]
+                  ]
+                  [ "docker run --rm -it -p 9000:9000 juliendehos/miso-maze:latest" ]
+                ]
+            ]
         ]
 
     viewRun Board{..} =

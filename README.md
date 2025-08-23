@@ -13,8 +13,7 @@ docker run --rm -it -p 9000:9000 juliendehos/miso-maze:latest
 ```
 
 - in a browser, go to
-  [juliendehos.github.io](https://juliendehos.github.io/miso-maze) and use
-  `ws://127.0.0.1:9000` for the server url.
+  [https://juliendehos.github.io/miso-maze/](https://juliendehos.github.io/miso-maze/)
 
 
 ## Build and run
@@ -33,7 +32,6 @@ make serve              # run http server
 
 ```
 nix-shell
-cabal update            # update package repository
 cabal test              # build and run tests
 cabal run               # build and run ws server
 ```
