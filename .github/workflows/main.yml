@@ -51,7 +51,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
-    needs: build
+    needs: build-app
 
     steps:
       - name: Deploy to GitHub Pages
