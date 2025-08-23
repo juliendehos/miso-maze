@@ -10,30 +10,40 @@ import Data.Text qualified as T
 import Data.Text.IO qualified as T
 import Miso
 import Miso.Lens
-import Miso.Lens.TH
+-- import Miso.Lens.TH
 import Miso.String (strip)
 import Network.WebSockets qualified as WS
 import System.Directory (listDirectory)
 import System.Random (getStdGen)
 
 import Game.Game
-import Network.Api
+
+import Paths_miso_maze
 
 data WsModel = WsModel
   { _wsGame :: Game
   , _wsClients :: M.Map MisoString WS.Connection
-  , _wsCurrentBoard :: MisoString
-  , _wsBoardFiles :: [MisoString]
+  , _wsCurrentBoard :: FilePath
+  , _wsBoardFiles :: [FilePath]
   }
 
-makeLenses ''WsModel
+-- makeLenses ''WsModel
+wsGame = lens _wsGame (\ record field -> record {_wsGame = field})
+wsGame :: Lens WsModel Game 
+wsClients = lens _wsClients (\ record field -> record {_wsClients = field})
+wsClients :: Lens WsModel (M.Map MisoString WS.Connection)
+wsCurrentBoard = lens _wsCurrentBoard (\ record field -> record {_wsCurrentBoard = field})
+wsCurrentBoard :: Lens WsModel FilePath
+wsBoardFiles = lens _wsBoardFiles (\ record field -> record {_wsBoardFiles = field})
+wsBoardFiles :: Lens WsModel [FilePath]
 
-mkWsModel :: MisoString -> IO WsModel
+mkWsModel :: FilePath -> IO WsModel
 mkWsModel mazeDir = do
-  let dir = T.unpack $ mkStaticUri mazeDir 
+  dataDir <- getDataDir
+  let dir = dataDir <> "/" <> mazeDir 
       mazeDir' = mazeDir <> "/"
-  mazeFiles <- map ((mazeDir'<>) . T.pack) . sort <$> listDirectory dir
-  T.putStrLn $ "maze files: " <> T.unwords mazeFiles
+  mazeFiles <- map (mazeDir'<>) . sort <$> listDirectory dir
+  putStrLn $ "maze files: " <> unwords mazeFiles
   gen <- getStdGen
   let model0 = WsModel (mkGame gen) M.empty " " mazeFiles
   nextBoard model0
@@ -45,14 +55,15 @@ nextBoard ws@WsModel{..} = do
       T.putStrLn "no more board"
       pure ws
     (f:fs) -> do
-      str <- T.readFile $ T.unpack $ mkStaticUri f
+      dataDir <- getDataDir
+      str <- T.readFile $ dataDir <> "/" <> f
       case loadBoard str _wsGame of
         Left err -> do
-          T.putStrLn $ "failed to read " <> f <> ": " <> err
+          putStrLn $ "failed to read " <> f <> ": " <> T.unpack err
           nextBoard $ ws & wsBoardFiles .~ fs   -- remove board file and try next 
         Right game -> do
-          let boardFile = ms f
-          T.putStrLn $ "new board: " <> boardFile
+          let boardFile = f
+          putStrLn $ "new board: " <> boardFile
           pure $ ws & wsBoardFiles .~ fs ++ [f]
                     & wsCurrentBoard .~ boardFile
                     & wsGame .~ game
@@ -86,4 +97,5 @@ tryAddBot name wsVar = do
       let ws' = ws & wsGame .~ game
       writeTVar wsVar ws'
       pure $ Right name'
+
 

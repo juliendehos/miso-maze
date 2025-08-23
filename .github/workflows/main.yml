@@ -1,13 +1,18 @@
 
-name: Build (client and server)
+name: Build and deploy
 
 on:
   push:
     branches: main
+  pull_request:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
-
-  build-all:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -18,10 +23,25 @@ jobs:
           github_access_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build using Nix
-        run: ./build.sh
+        run: nix develop .#wasm --command bash -c "make"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./output
+          path: ./public
+
+  deploy:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    needs: build
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
 

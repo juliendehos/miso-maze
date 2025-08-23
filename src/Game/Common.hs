@@ -13,7 +13,7 @@ import Data.Vector qualified as V
 import GHC.Generics
 import Miso
 import Miso.Lens
-import Miso.Lens.TH
+-- import Miso.Lens.TH
 import Miso.Util.Lexer as L
 import Miso.Util.Parser as P
 import System.Random.Stateful
@@ -27,7 +27,12 @@ data Position = Position
   , _posJ :: Int
   } deriving (Eq, Generic, Show)
 
-makeLenses ''Position
+-- makeLenses ''Position
+posI = lens _posI (\ record field -> record {_posI = field})
+posI :: Lens Position Int
+posJ = lens _posJ (\ record field -> record {_posJ = field})
+posJ :: Lens Position Int
+
 
 instance UniformRange Position where
   uniformRM (Position i0 j0, Position i1 j1) g = 
@@ -44,7 +49,14 @@ data Player = Player
   , _playerPos :: Position
   } deriving (Eq, Generic, Show)
 
-makeLenses ''Player
+-- makeLenses ''Player
+playerName = lens _playerName (\ record field -> record {_playerName = field})
+playerName :: Lens Player MisoString
+playerCol = lens _playerCol (\ record field -> record {_playerCol = field})
+playerCol :: Lens Player Int
+playerPos = lens _playerPos (\ record field -> record {_playerPos = field})
+playerPos :: Lens Player Position
+
 
 instance ToJSON Player where
     toEncoding = genericToEncoding Aeson.defaultOptions
@@ -77,7 +89,12 @@ data Board = Board
   , _boardData :: V.Vector Cell
   } deriving (Eq, Show)
 
-makeLenses ''Board
+-- makeLenses ''Board
+boardNiNj = lens _boardNiNj (\ record field -> record {_boardNiNj = field})
+boardNiNj :: Lens Board (Int, Int)
+boardData = lens _boardData (\ record field -> record {_boardData = field})
+boardData :: Lens Board (V.Vector Cell)
+
 
 emptyBoard :: Board
 emptyBoard = Board (0, 0) empty

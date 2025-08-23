@@ -7,7 +7,7 @@ import Data.Map qualified as M
 import Data.Vector qualified as V
 import Miso hiding (go)
 import Miso.Lens
-import Miso.Lens.TH
+-- import Miso.Lens.TH
 import System.Random
 
 import Game.Common
@@ -36,7 +36,12 @@ data InfoPlayer = InfoPlayer
   , _infoCol :: Int
   } deriving (Eq, Show)
 
-makeLenses ''InfoPlayer
+-- makeLenses ''InfoPlayer
+infoPos = lens _infoPos (\ record field -> record {_infoPos = field})
+infoPos :: Lens InfoPlayer Position
+infoCol = lens _infoCol (\ record field -> record {_infoCol = field})
+infoCol :: Lens InfoPlayer Int
+
 
 type MapInfoPlayer = M.Map MisoString InfoPlayer
 
@@ -48,7 +53,17 @@ data Game = Game
   , _gameGen :: StdGen
   } deriving (Eq, Show)
 
-makeLenses ''Game
+-- makeLenses ''Game
+gameBoard = lens _gameBoard (\ record field -> record {_gameBoard = field})
+gameBoard :: Lens Game Board
+gameInfoPlayer = lens _gameInfoPlayer (\ record field -> record {_gameInfoPlayer = field})
+gameInfoPlayer :: Lens Game MapInfoPlayer
+gameFreeColors = lens _gameFreeColors (\ record field -> record {_gameFreeColors = field})
+gameFreeColors :: Lens Game [Int]
+gameRemMeetings = lens _gameRemMeetings (\ record field -> record {_gameRemMeetings = field})
+gameRemMeetings :: Lens Game Int
+gameGen = lens _gameGen (\ record field -> record {_gameGen = field})
+gameGen :: Lens Game StdGen
 
 -------------------------------------------------------------------------------
 -- export

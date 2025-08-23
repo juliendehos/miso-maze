@@ -10,12 +10,12 @@ let
 
 in
   pkgs.dockerTools.buildLayeredImage {
-    name = "miso-maze-ws";
+    name = "miso-maze";
     tag = "latest";
     config = {
       WorkingDir = "${app}";
       Entrypoint = [ entrypoint ];
-      Cmd = [ "${app}/bin/miso-maze-ws" ];
+      Cmd = [ "${app}/bin/app" ];
     };
   }
 

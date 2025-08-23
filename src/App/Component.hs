@@ -40,6 +40,7 @@ data Action
   = ActionNone
   | ActionDebug MisoString
   | ActionKey IS.IntSet
+  | ActionServerURL MisoString
   | ActionName MisoString
   | ActionConnect
   | ActionSetBoard MisoString MisoString    -- url, data
@@ -75,6 +76,9 @@ updateModel (ActionKey keys)
   | IS.member 40 keys = issue $ ActionWsSend (Play MoveDown)
   | otherwise = pure ()
 
+updateModel (ActionServerURL str) =
+  modelWsUrl .= str
+
 updateModel (ActionName str) =
   modelName .= str
 
@@ -85,6 +89,7 @@ updateModel ActionConnect = do
     else do
       modelError .= ""
       wsUrl <- use modelWsUrl
+      debug wsUrl
       connectJSON wsUrl ActionWsOpen ActionWsClosed ActionWsRecv ActionWsError
 
 updateModel (ActionSetBoard url str) =
@@ -129,16 +134,21 @@ viewModel :: Model -> View Model Action
 viewModel m@Model{..} =
   div_ 
     []
-    [ h1_ [] [ "miso-maze" ]
-    , if _modelBoard == emptyBoard then viewConnect else viewRun _modelBoard
+    [ if _modelBoard == emptyBoard then viewConnect else viewRun _modelBoard
     , p_ [] [ text _modelError ]
     ]
 
   where
     viewConnect =
       div_ []
-        [ "Name: "
-        , input_ [ type_ "text", onChange ActionName ]
+        [ p_ [] 
+            [ "Server URL: "
+            , input_ [ type_ "text", value_ defaultWsUrl, onChange ActionServerURL ]
+            ]
+        , p_ []
+            [ "Name: "
+            , input_ [ type_ "text", onChange ActionName ]
+            ]
         , button_ [ onClick ActionConnect ] [ "connect" ]
         ]
 
@@ -224,12 +234,9 @@ cellSizeD = fromIntegral cellSize
 -- Component
 -------------------------------------------------------------------------------
 
-type AppComponent = App Model Action
-
-appComponent :: MisoString -> AppComponent
-appComponent wsUrl = do
-  let initialModel = mkModel wsUrl
-  (component initialModel updateModel viewModel)
+appComponent :: App Model Action
+appComponent = do
+  (component mkModel updateModel viewModel)
     { subs = [ keyboardSub ActionKey ]
     -- , logLevel = DebugAll
     }

@@ -13,14 +13,11 @@ import Data.Text.Encoding qualified as T
 import Data.Text.IO qualified as T
 import Miso
 import Miso.Lens
-import Network.Wai (Application)
-import Network.Wai.Handler.WebSockets (websocketsOr)
 import Network.WebSockets qualified as WS
 import System.Random.Stateful
 
 import Game.Common
 import Game.Game
-import Network.Api
 import Network.Protocol
 import Server.WsModel
 
@@ -46,8 +43,7 @@ broadcastBoard wsVar = do
   (currentBoard, conns) <- atomically $ do
     ws <- readTVar wsVar
     pure (ws^.wsCurrentBoard, ws^.wsClients&M.elems)
-  let boardUrl = mkStaticUri currentBoard
-  forM_ conns $ flip sendMsg (UpdateBoard boardUrl)
+  forM_ conns $ flip sendMsg (UpdateBoard $ ms currentBoard)
 
 playClientMove :: TVar WsModel -> MisoString -> Move -> IO ()
 playClientMove wsVar name move = do
@@ -103,8 +99,8 @@ handleRun :: TVar WsModel -> MisoString -> WS.Connection -> IO ()
 handleRun wsVar name conn = do
 
   -- get and send the current board
-  boardUrl <- atomically (mkStaticUri . _wsCurrentBoard <$> readTVar wsVar)
-  sendMsg conn (UpdateBoard boardUrl)
+  boardUrl <- atomically (_wsCurrentBoard <$> readTVar wsVar)
+  sendMsg conn (UpdateBoard $ ms boardUrl)
 
   -- get and broadcast the player list
   broadcastPlayers wsVar
@@ -117,14 +113,11 @@ handleRun wsVar name conn = do
       _ -> T.putStrLn "ignored: expecting Play"
 
 -------------------------------------------------------------------------------
--- apps
+-- app
 -------------------------------------------------------------------------------
 
-wsApp :: TVar WsModel -> Application -> Application
-wsApp wsVar = websocketsOr WS.defaultConnectionOptions (serverApp wsVar)
-
-serverApp ::TVar WsModel -> WS.PendingConnection -> IO ()
-serverApp wsVar pc = do
+wsApp ::TVar WsModel -> WS.PendingConnection -> IO ()
+wsApp wsVar pc = do
   conn <- WS.acceptRequest pc
   WS.withPingThread conn 30 (pure ()) (handleConnect wsVar conn)
 

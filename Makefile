@@ -26,6 +26,9 @@ optim:
 	wasm-opt -all -O2 public/app.wasm -o public/app.wasm
 	wasm-tools strip -o public/app.wasm public/app.wasm
 
+serve:
+	http-server public
+
 clean:
 	rm -rf dist-newstyle public output
 
