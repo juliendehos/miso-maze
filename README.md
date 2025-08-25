@@ -3,6 +3,8 @@
 Client-server web app using [Miso](https://github.com/dmjio/miso) and
 WebSockets: move inside the maze and meet other players.
 
+![](miso-maze.gif)
+
 
 ## Try online with a local server
 
@@ -43,4 +45,9 @@ nix-build docker.nix                                    # build docker image
 docker load < result                                    # load image into docker
 docker run --rm -it -p 9000:9000 miso-maze:latest       # run docker image
 ```
+
+## See also
+
+The isomorphic version:
+[miso-maze-iso](https://github.com/juliendehos/miso-maze-iso).
 
