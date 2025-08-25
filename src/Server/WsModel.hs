@@ -27,16 +27,6 @@ data WsModel = WsModel
   , _wsBoardFiles :: [FilePath]
   }
 
--- makeLenses ''WsModel
-wsGame = lens _wsGame (\ record field -> record {_wsGame = field})
-wsGame :: Lens WsModel Game 
-wsClients = lens _wsClients (\ record field -> record {_wsClients = field})
-wsClients :: Lens WsModel (M.Map MisoString WS.Connection)
-wsCurrentBoard = lens _wsCurrentBoard (\ record field -> record {_wsCurrentBoard = field})
-wsCurrentBoard :: Lens WsModel FilePath
-wsBoardFiles = lens _wsBoardFiles (\ record field -> record {_wsBoardFiles = field})
-wsBoardFiles :: Lens WsModel [FilePath]
-
 mkWsModel :: FilePath -> IO WsModel
 mkWsModel mazeDir = do
   dataDir <- getDataDir
@@ -98,4 +88,21 @@ tryAddBot name wsVar = do
       writeTVar wsVar ws'
       pure $ Right name'
 
+-------------------------------------------------------------------------------
+-- lesnses
+-------------------------------------------------------------------------------
+
+-- makeLenses ''WsModel
+
+wsGame :: Lens WsModel Game 
+wsGame = lens _wsGame (\ record field -> record {_wsGame = field})
+
+wsClients :: Lens WsModel (M.Map MisoString WS.Connection)
+wsClients = lens _wsClients (\ record field -> record {_wsClients = field})
+
+wsCurrentBoard :: Lens WsModel FilePath
+wsCurrentBoard = lens _wsCurrentBoard (\ record field -> record {_wsCurrentBoard = field})
+
+wsBoardFiles :: Lens WsModel [FilePath]
+wsBoardFiles = lens _wsBoardFiles (\ record field -> record {_wsBoardFiles = field})
 

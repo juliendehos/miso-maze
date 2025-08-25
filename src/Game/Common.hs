@@ -27,13 +27,6 @@ data Position = Position
   , _posJ :: Int
   } deriving (Eq, Generic, Show)
 
--- makeLenses ''Position
-posI = lens _posI (\ record field -> record {_posI = field})
-posI :: Lens Position Int
-posJ = lens _posJ (\ record field -> record {_posJ = field})
-posJ :: Lens Position Int
-
-
 instance UniformRange Position where
   uniformRM (Position i0 j0, Position i1 j1) g = 
     Position <$> uniformRM (i0, i1) g <*> uniformRM (j0, j1) g
@@ -48,15 +41,6 @@ data Player = Player
   , _playerCol :: Int
   , _playerPos :: Position
   } deriving (Eq, Generic, Show)
-
--- makeLenses ''Player
-playerName = lens _playerName (\ record field -> record {_playerName = field})
-playerName :: Lens Player MisoString
-playerCol = lens _playerCol (\ record field -> record {_playerCol = field})
-playerCol :: Lens Player Int
-playerPos = lens _playerPos (\ record field -> record {_playerPos = field})
-playerPos :: Lens Player Position
-
 
 instance ToJSON Player where
     toEncoding = genericToEncoding Aeson.defaultOptions
@@ -88,13 +72,6 @@ data Board = Board
   { _boardNiNj :: (Int, Int)
   , _boardData :: V.Vector Cell
   } deriving (Eq, Show)
-
--- makeLenses ''Board
-boardNiNj = lens _boardNiNj (\ record field -> record {_boardNiNj = field})
-boardNiNj :: Lens Board (Int, Int)
-boardData = lens _boardData (\ record field -> record {_boardData = field})
-boardData :: Lens Board (V.Vector Cell)
-
 
 emptyBoard :: Board
 emptyBoard = Board (0, 0) empty
@@ -177,4 +154,35 @@ parseBoard str =
       case parse parserBoard tokens of
         Left err -> Left (ms $ show err)
         Right b -> Right b
+
+-------------------------------------------------------------------------------
+-- lenses
+-------------------------------------------------------------------------------
+
+-- makeLenses ''Position
+
+posI :: Lens Position Int
+posI = lens _posI (\ record field -> record {_posI = field})
+
+posJ :: Lens Position Int
+posJ = lens _posJ (\ record field -> record {_posJ = field})
+
+-- makeLenses ''Player
+
+playerName :: Lens Player MisoString
+playerName = lens _playerName (\ record field -> record {_playerName = field})
+
+playerCol :: Lens Player Int
+playerCol = lens _playerCol (\ record field -> record {_playerCol = field})
+
+playerPos :: Lens Player Position
+playerPos = lens _playerPos (\ record field -> record {_playerPos = field})
+
+-- makeLenses ''Board
+
+boardNiNj :: Lens Board (Int, Int)
+boardNiNj = lens _boardNiNj (\ record field -> record {_boardNiNj = field})
+
+boardData :: Lens Board (V.Vector Cell)
+boardData = lens _boardData (\ record field -> record {_boardData = field})
 

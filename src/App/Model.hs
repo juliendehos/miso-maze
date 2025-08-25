@@ -24,24 +24,6 @@ data Model = Model
   , _modelRemMeetings :: Int
   } deriving (Eq)
 
--- makeLenses ''Model
-modelError = lens _modelError (\ record field -> record {_modelError = field})
-modelError :: Lens Model MisoString
-modelWsUrl = lens _modelWsUrl (\ record field -> record {_modelWsUrl = field})
-modelWsUrl :: Lens Model MisoString
-modelWs = lens _modelWs (\ record field -> record {_modelWs = field})
-modelWs :: Lens Model WebSocket
-modelName = lens _modelName (\ record field -> record {_modelName = field})
-modelName :: Lens Model MisoString
-modelPlayers = lens _modelPlayers (\ record field -> record {_modelPlayers = field})
-modelPlayers :: Lens Model [Player]
-modelBoard = lens _modelBoard (\ record field -> record {_modelBoard = field})
-modelBoard :: Lens Model Board
-modelBoardName = lens _modelBoardName (\ record field -> record {_modelBoardName = field})
-modelBoardName :: Lens Model MisoString
-modelRemMeetings = lens _modelRemMeetings (\ record field -> record {_modelRemMeetings = field})
-modelRemMeetings :: Lens Model Int
-
 
 mkModel :: Model
 mkModel = Model 
@@ -54,4 +36,34 @@ mkModel = Model
   , _modelBoardName = ""
   , _modelRemMeetings = 0
   }
+
+-------------------------------------------------------------------------------
+-- lenses
+-------------------------------------------------------------------------------
+
+-- makeLenses ''Model
+
+modelError :: Lens Model MisoString
+modelError = lens _modelError (\ record field -> record {_modelError = field})
+
+modelWsUrl :: Lens Model MisoString
+modelWsUrl = lens _modelWsUrl (\ record field -> record {_modelWsUrl = field})
+
+modelWs :: Lens Model WebSocket
+modelWs = lens _modelWs (\ record field -> record {_modelWs = field})
+
+modelName :: Lens Model MisoString
+modelName = lens _modelName (\ record field -> record {_modelName = field})
+
+modelPlayers :: Lens Model [Player]
+modelPlayers = lens _modelPlayers (\ record field -> record {_modelPlayers = field})
+
+modelBoard :: Lens Model Board
+modelBoard = lens _modelBoard (\ record field -> record {_modelBoard = field})
+
+modelBoardName :: Lens Model MisoString
+modelBoardName = lens _modelBoardName (\ record field -> record {_modelBoardName = field})
+
+modelRemMeetings :: Lens Model Int
+modelRemMeetings = lens _modelRemMeetings (\ record field -> record {_modelRemMeetings = field})
 

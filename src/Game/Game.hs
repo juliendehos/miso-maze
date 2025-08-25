@@ -36,13 +36,6 @@ data InfoPlayer = InfoPlayer
   , _infoCol :: Int
   } deriving (Eq, Show)
 
--- makeLenses ''InfoPlayer
-infoPos = lens _infoPos (\ record field -> record {_infoPos = field})
-infoPos :: Lens InfoPlayer Position
-infoCol = lens _infoCol (\ record field -> record {_infoCol = field})
-infoCol :: Lens InfoPlayer Int
-
-
 type MapInfoPlayer = M.Map MisoString InfoPlayer
 
 data Game = Game
@@ -52,18 +45,6 @@ data Game = Game
   , _gameRemMeetings :: Int
   , _gameGen :: StdGen
   } deriving (Eq, Show)
-
--- makeLenses ''Game
-gameBoard = lens _gameBoard (\ record field -> record {_gameBoard = field})
-gameBoard :: Lens Game Board
-gameInfoPlayer = lens _gameInfoPlayer (\ record field -> record {_gameInfoPlayer = field})
-gameInfoPlayer :: Lens Game MapInfoPlayer
-gameFreeColors = lens _gameFreeColors (\ record field -> record {_gameFreeColors = field})
-gameFreeColors :: Lens Game [Int]
-gameRemMeetings = lens _gameRemMeetings (\ record field -> record {_gameRemMeetings = field})
-gameRemMeetings :: Lens Game Int
-gameGen = lens _gameGen (\ record field -> record {_gameGen = field})
-gameGen :: Lens Game StdGen
 
 -------------------------------------------------------------------------------
 -- export
@@ -173,4 +154,33 @@ resetPositions g@Game{..} =
       let (pos, gen') = genPosition _gameBoard infos gen
       in (M.insert n (i & infoPos .~ pos) infos, gen')
     (infos1, gen1) = M.foldlWithKey' fAcc (M.empty, _gameGen) _gameInfoPlayer
+
+-------------------------------------------------------------------------------
+-- lenses
+-------------------------------------------------------------------------------
+
+-- makeLenses ''InfoPlayer
+
+infoPos :: Lens InfoPlayer Position
+infoPos = lens _infoPos (\ record field -> record {_infoPos = field})
+
+infoCol :: Lens InfoPlayer Int
+infoCol = lens _infoCol (\ record field -> record {_infoCol = field})
+
+-- makeLenses ''Game
+
+gameBoard :: Lens Game Board
+gameBoard = lens _gameBoard (\ record field -> record {_gameBoard = field})
+
+gameInfoPlayer :: Lens Game MapInfoPlayer
+gameInfoPlayer = lens _gameInfoPlayer (\ record field -> record {_gameInfoPlayer = field})
+
+gameFreeColors :: Lens Game [Int]
+gameFreeColors = lens _gameFreeColors (\ record field -> record {_gameFreeColors = field})
+
+gameRemMeetings :: Lens Game Int
+gameRemMeetings = lens _gameRemMeetings (\ record field -> record {_gameRemMeetings = field})
+
+gameGen :: Lens Game StdGen
+gameGen = lens _gameGen (\ record field -> record {_gameGen = field})
 
